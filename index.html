@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2024 Presidential Election in the Great Lakes - 226 Harris in blue font, 312 Trump in red font</title>
+    <style>
+        /* Basic styling */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #map {
+            height: 600px;
+            width: 100%;
+        }
+        .legend {
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            background-color: white;
+            padding: 10px;
+            border: 1px solid black;
+            width: 150px;
+            font-size: 14px;
+            z-index: 1000; /* Ensures legend is on top of the map */
+        }
+        .legend div {
+            height: 10px;
+            margin: 4px 0;
+        }
+        .light-red { background-color: #ffcccc; }
+        .medium-red { background-color: #ff6666; }
+        .dark-red { background-color: #cc0000; }
+        .light-blue { background-color: #cce5ff; }
+        .medium-blue { background-color: #66b2ff; }
+        .dark-blue { background-color: #004c99; }
+    </style>
+    <!-- Include Leaflet.js library -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</head>
+<body>
+
+    <h1>2024 Presidential Election in the Great Lakes</h1>
+    <p>This map highlights the 2024 U.S. Presidential election results in the Great Lakes states. Trump performed stronger here than in the 2016 and 2020 elections. <a href="https://apnews.com/ap-elections-explained">Learn more about the results</a>.</p>
+    <p><em>Author: Ethan Tilley</em></p>
+
+    <div id="map"></div>
+
+    <!-- Legend positioned on the center left side -->
+    <div class="legend">
+        <h4>Legend</h4>
+        <div class="dark-red"></div> Dark Red (Trump)
+        <div class="medium-red"></div> Medium Red (Trump)
+        <div class="light-red"></div> Light Red (Trump)
+        <div class="dark-blue"></div> Dark Blue (Harris)
+        <div class="medium-blue"></div> Medium Blue (Harris)
+        <div class="light-blue"></div> Light Blue (Harris)
+    </div>
+
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([42.5, -85], 5);
+
+        // Set up map tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Define coordinates and styles for each state
+        const statesData = [
+            {
+                name: 'New York',
+                color: '#004c99', // Dark Blue (55.8% Harris)
+                percentage: '55.8% Harris',
+                coordinates: [
+                    [42.0209, -79.7669], [42.0091, -75.3850], [41.0151, -73.9137],
+                    [40.5672, -74.2495], [41.0634, -71.7547], [41.2492, -72.1567],
+                    [40.9553, -73.6155], [45.0022, -73.3468], [44.9930, -74.9686],
+                    [43.6698, -76.8272], [43.4769, -79.2045], [42.5032, -79.7750],
+                    [42.0670, -79.7941]
+                ]
+            },
+            {
+                name: 'Ohio',
+                color: '#cc6666', // Medium Red (55.2% Trump)
+                percentage: '55.2% Trump',
+                coordinates: [
+                    [38.4644, -82.4865], [40.6633, -80.5657], [42.2735, -80.5467],
+                    [41.6797, -84.8448], [39.1106, -84.8157], [38.4541, -82.5710]
+                ]
+            },
+            {
+                name: 'Indiana',
+                color: '#cc0000', // Dark Red (58.6% Trump)
+                percentage: '58.6% Trump',
+                coordinates: [
+                    [37.8125, -88.0317], [38.8680, -84.8201], [41.7643, -84.8088],
+                    [41.7559, -87.5341], [37.8304, -88.0430]
+                ]
+            },
+            {
+                name: 'Michigan',
+                color: '#ff9999', // Light Red (49.7% Trump)
+                percentage: '49.7% Trump',
+                coordinates: [
+                    [41.7724, -87.2158], [41.7545, -83.4097], [43.5944, -82.1223],
+                    [45.3347, -82.5301], [48.3084, -88.3773], [48.0304, -89.5472],
+                    [46.5806, -90.4079], [45.2423, -86.3381], [41.7648, -87.2158]
+                ]
+            },
+            {
+                name: 'Wisconsin',
+                color: '#ff9999', // Light Red (49.7% Trump)
+                percentage: '49.7% Trump',
+                coordinates: [
+                    [42.5158, -90.6359], [42.4840, -87.0448], [45.2261, -86.2841],
+                    [46.6020, -90.4680], [47.3031, -90.0116], [46.6412, -92.3318],
+                    [44.7688, -92.7883], [43.4857, -91.2288], [42.5401, -90.6202]
+                ]
+            },
+            {
+                name: 'Minnesota',
+                color: '#66b2ff', // Light Blue (51.1% Harris)
+                percentage: '51.1% Harris',
+                coordinates: [
+                    [43.5032, -96.4538], [43.4959, -91.2226], [44.7698, -92.7557],
+                    [46.7031, -92.1909], [48.0148, -89.5551], [48.9948, -97.1666],
+                    [43.5349, -96.4673]
+                ]
+            },
+            {
+                name: 'Illinois',
+                color: '#3385ff', // Medium Blue (53.8% Harris)
+                percentage: '53.8% Harris',
+                coordinates: [
+                    [37.0143, -89.1589], [37.8226, -88.0054], [42.5033, -87.0781],
+                    [42.5700, -90.6516], [41.7991, -90.2671], [41.3592, -91.0813],
+                    [40.2638, -91.4884], [37.0323, -89.1362]
+                ]
+            },
+            {
+                name: 'Pennsylvania',
+                color: '#ff9999', // Lean Red (50.5% Trump)
+                percentage: '50.5% Trump',
+                coordinates: [
+                    [39.7974, -75.4010], [40.1895, -74.7533], [40.7249, -75.2091],
+                    [41.3762, -74.7053], [42.0031, -75.3770], [42.0091, -79.7669],
+                    [42.4885, -79.7749], [42.3173, -80.5425], [39.7298, -80.5265],
+                    [39.7298, -75.7848], [39.8282, -75.4330]
+                ]
+            }
+        ];
+
+        // Add polygons to map for each state
+        statesData.forEach(state => {
+            L.polygon(state.coordinates, {
+                color: state.color,
+                fillOpacity: 0.7
+            })
+            .bindPopup(`<strong>${state.name}</strong><br>2024 Result: ${state.percentage}`)
+            .addTo(map);
+        });
+    </script>
+
+</body>
+</html>
+
